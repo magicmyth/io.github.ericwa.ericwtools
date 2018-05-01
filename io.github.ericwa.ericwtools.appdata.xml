@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <id>io.github.ericwa.ericwtools</id>
+  <name>ericw-tools</name>
+  <summary>Quake and other ID Tech 1 compiling tools</summary>
+  <metadata_license>CC-BY-SA-3.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+  <description>
+    <p>
+      A collection of command line utilities for building Quake levels and working with various Quake file formats.
+    </p>
+  <p>
+    ericw-tools is a branch of Tyrann's quake 1 tools, focused on adding lighting features, mostly borrowed from q3map2.
+  </p>
+  </description>
+  <url type="homepage">http://ericwa.github.io/ericw-tools</url>
+  <url type="bugtracker">https://github.com/ericwa/ericw-tools/issues</url>
+  <url type="help">http://ericwa.github.io/ericw-tools/doc/qbsp.html</url>
+  <url type="help">http://ericwa.github.io/ericw-tools/doc/vis.html</url>
+  <url type="help">http://ericwa.github.io/ericw-tools/doc/light.html</url>
+  <releases>
+    <release date="2018-04-14" version="0.18.1+git-00e60f9"/>
+  </releases>
+  <update_contact>magicmyth@magicmyth.com</update_contact>
+</component>

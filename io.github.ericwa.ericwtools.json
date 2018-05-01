@@ -1,0 +1,170 @@
+{
+  "app-id": "io.github.ericwa.ericwtools",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "1.6",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "ewt-build-map",
+  "finish-args": [
+     "--filesystem=host",
+     "--env=LD_LIBRARY_PATH=/app/lib:/app/lib/tbb/build/release"
+  ],
+  "cleanup": [
+    "/include",
+    "/lib/pkgconfig",
+    "/lib/tbb/include",
+    "/lib/cmake",
+    "/share/pkgconfig",
+    "/share/aclocal",
+    "/man",
+    "/share/man",
+    "/share/doc/embree3",
+    "*.la",
+    "*.a"
+  ],
+  "modules": [
+    {
+      "name": "ispc",
+      "buildsystem": "simple",
+      "build-commands": [
+        "make -j `nproc`"
+      ],
+      "subdir": "ispc-ispc-0621fcb",
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://github.com/ispc/ispc/tarball/v1.9.2",
+          "sha256": "117542b69533104a3a296221f97d60f731e0d5f62bff2082c277b3277c3a1036",
+          "dest-filename": "ispc-ispc-v1.9.2-0-g417b33e.tar.gz"
+        },
+        {
+          "type": "shell",
+          "commands": ["tar xfz ispc-ispc-v1.9.2-0-g417b33e.tar.gz", "ls"]
+
+        }
+      ],
+      "post-install": [
+          "install -Dm755 ispc /app/bin/ispc"
+      ]
+    },
+    {
+      "name": "tbb",
+      "no-autogen": true,
+      "no-make-install": true,
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/01org/tbb/archive/2018_U3.tar.gz",
+          "sha256": "23793c8645480148e9559df96b386b780f92194c80120acce79fcdaae0d81f45"
+        }
+      ],
+      "post-install": [
+        "mv build/*_release build/release",
+        "mkdir -p /app/lib/tbb",
+        "cp -r build include /app/lib/tbb/",
+        "sed -e'/setenv TBBROOT/c\setenv TBBROOT \"/app/lib/tbb\" #' -e'/setenv tbb_bin/c\setenv tbb_bin \"/app/lib/tbb/build/release\" #' -i /app/lib/tbb/build/release/tbbvars.csh",
+        "sed -e'/export TBBROOT/c\export TBBROOT=\"/app/lib/tbb\" #' -e'/tbb_bin=/c\\tbb_bin=\"/app/lib/tbb/build/release\" #' -i /app/lib/tbb/build/release/tbbvars.sh"
+      ]
+    },
+    {
+      "name": "libGLU",
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://mesa.freedesktop.org/archive/glu/glu-9.0.0.tar.bz2",
+          "sha256": "1f7ad0d379a722fcbd303aa5650c6d7d5544fde83196b42a73d1193568a4df12"
+        }
+      ]
+    },
+    {
+      "name": "freeglut",
+      "buildsystem": "cmake",
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://netix.dl.sourceforge.net/project/freeglut/freeglut/3.0.0/freeglut-3.0.0.tar.gz",
+          "sha256": "2a43be8515b01ea82bcfa17d29ae0d40bd128342f0930cd1f375f1ff999f76a2"
+        }
+      ]
+    },
+    {
+      "name": "embree",
+      "buildsystem": "cmake",
+      "config-opts": [
+        "-DEMBREE_TBB_ROOT=/app/lib/tbb",
+        "-DTBB_LIBRARY=/app/lib/tbb/build/release/libtbb.so.2",
+        "-DTBB_LIBRARY_MALLOC=/app/lib/tbb/build/release/libtbbmalloc.so.2",
+        "-DEMBREE_TUTORIALS="
+      ],
+      "builddir": true,
+      "build-options": {
+        "append-ld-library-path": "/app/lib/tbb/build/release",
+        "env": {
+          "TBB_LIBRARY": "/app/lib/tbb/build/release/libtbb.so.2",
+          "TBB_LIBRARY_MALLOC": "/app/lib/tbb/build/release/libtbbmalloc.so.2",
+          "CPATH": "/app/lib/tbb/include"
+        }
+      },
+      "sources": [
+        {
+          "type": "shell",
+          "commands": [
+            "source /app/lib/tbb/build/release/tbbvars.sh"
+          ]
+        },
+        {
+          "type": "archive",
+          "url": "https://github.com/embree/embree/archive/v2.17.3.tar.gz",
+          "sha256": "c7d7172ce6e64a7a405fba97ed9e3e92a9cdd53aba5cfc0d46d4b792e22bc0fe"
+        }
+      ],
+      "post-install": [
+        "ln -s /app/share/doc/embree2 /app/lib/cmake/embree-2.17.3/doc"
+      ]
+    },
+    {
+      "name": "ericwtools",
+      "buildsystem": "cmake",
+      "builddir": true,
+      "config-opts": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/app",
+        "-DCMAKE_INSTALL_INCLUDEDIR=/app/include/embree3",
+        "-Dembree_DIR=/app/lib/cmake/embree-2.17.3",
+        "-DDISTRIBUTOR=MagicMyth"
+      ],
+      "build-options": {
+        "append-ld-library-path": "/app/lib/tbb/build/release"
+      },
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/ericwa/ericw-tools.git",
+          "commit": "00e60f923eb095f495e2159d017e83c6562a1a12"
+        }
+      ],
+      "cleanup": [
+        "/bin/README.md",
+        "/bin/changelog.txt",
+        "/bin/gpl_v3.txt"
+      ]
+    },
+    {
+      "name": "app-parts",
+      "buildsystem": "simple",
+      "sources": [
+        {
+          "type": "file",
+          "path": "ewt-build-map.sh"
+        },
+        {
+          "type": "file",
+          "path": "io.github.ericwa.ericwtools.appdata.xml"
+        }
+      ],
+      "build-commands": [
+        "install -Dm755 ewt-build-map.sh /app/bin/ewt-build-map",
+        "install -Dm644 io.github.ericwa.ericwtools.appdata.xml /app/share/appdata/io.github.ericwa.ericwtools.appdata.xml"
+      ]
+    }
+  ]
+}
