@@ -6,18 +6,21 @@
   "command": "ewt-build-map",
   "finish-args": [
      "--filesystem=host",
-     "--env=LD_LIBRARY_PATH=/app/lib:/app/lib/tbb/build/release"
+     "--env=LD_LIBRARY_PATH=/app/lib:/app/lib/tbb"
   ],
   "cleanup": [
     "/include",
     "/lib/pkgconfig",
     "/lib/tbb/include",
     "/lib/cmake",
+    "/lib/debug",
     "/share/pkgconfig",
     "/share/aclocal",
     "/man",
     "/share/man",
-    "/share/doc/embree3",
+    "/share/doc",
+    "/doc",
+    "/bin/ispc",
     "*.la",
     "*.a"
   ],
@@ -58,11 +61,9 @@
         }
       ],
       "post-install": [
-        "mv build/*_release build/release",
-        "mkdir -p /app/lib/tbb",
-        "cp -r build include /app/lib/tbb/",
-        "sed -e'/setenv TBBROOT/c\setenv TBBROOT \"/app/lib/tbb\" #' -e'/setenv tbb_bin/c\setenv tbb_bin \"/app/lib/tbb/build/release\" #' -i /app/lib/tbb/build/release/tbbvars.csh",
-        "sed -e'/export TBBROOT/c\export TBBROOT=\"/app/lib/tbb\" #' -e'/tbb_bin=/c\\tbb_bin=\"/app/lib/tbb/build/release\" #' -i /app/lib/tbb/build/release/tbbvars.sh"
+        "mkdir -p /app/lib/tbb /app/include",
+        "cp -a build/*_release/*.so* /app/lib/tbb/",
+        "cp -r include /app/include/tbb"
       ]
     },
     {
@@ -91,26 +92,20 @@
       "buildsystem": "cmake",
       "config-opts": [
         "-DEMBREE_TBB_ROOT=/app/lib/tbb",
-        "-DTBB_LIBRARY=/app/lib/tbb/build/release/libtbb.so.2",
-        "-DTBB_LIBRARY_MALLOC=/app/lib/tbb/build/release/libtbbmalloc.so.2",
+        "-DTBB_INCLUDE_DIR=/app/include/tbb",
+        "-DTBB_LIBRARY=/app/lib/tbb/libtbb.so.2",
+        "-DTBB_LIBRARY_MALLOC=/app/lib/tbb/libtbbmalloc.so.2",
         "-DEMBREE_TUTORIALS="
       ],
       "builddir": true,
       "build-options": {
-        "append-ld-library-path": "/app/lib/tbb/build/release",
+        "append-ld-library-path": "/app/lib/tbb",
         "env": {
-          "TBB_LIBRARY": "/app/lib/tbb/build/release/libtbb.so.2",
-          "TBB_LIBRARY_MALLOC": "/app/lib/tbb/build/release/libtbbmalloc.so.2",
-          "CPATH": "/app/lib/tbb/include"
+          "TBB_LIBRARY": "/app/lib/tbb/libtbb.so.2",
+          "TBB_LIBRARY_MALLOC": "/app/lib/tbb/libtbbmalloc.so.2"
         }
       },
       "sources": [
-        {
-          "type": "shell",
-          "commands": [
-            "source /app/lib/tbb/build/release/tbbvars.sh"
-          ]
-        },
         {
           "type": "archive",
           "url": "https://github.com/embree/embree/archive/v2.17.3.tar.gz",
@@ -133,7 +128,7 @@
         "-DDISTRIBUTOR=MagicMyth"
       ],
       "build-options": {
-        "append-ld-library-path": "/app/lib/tbb/build/release"
+        "append-ld-library-path": "/app/lib/tbb"
       },
       "sources": [
         {
