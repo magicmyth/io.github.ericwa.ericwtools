@@ -5,8 +5,7 @@
   "sdk": "org.freedesktop.Sdk",
   "command": "ewt-build-map",
   "finish-args": [
-     "--filesystem=host",
-     "--env=LD_LIBRARY_PATH=/app/lib:/app/lib/tbb"
+     "--filesystem=host"
   ],
   "cleanup": [
     "/include",
@@ -21,6 +20,7 @@
     "/share/doc",
     "/doc",
     "/bin/ispc",
+    "/bin/embree2",
     "*.la",
     "*.a"
   ],
@@ -61,8 +61,8 @@
         }
       ],
       "post-install": [
-        "mkdir -p /app/lib/tbb /app/include",
-        "cp -a build/*_release/*.so* /app/lib/tbb/",
+        "mkdir -p /app/lib /app/include",
+        "cp build/*_release/{libtbbmalloc.so.2,libtbb.so.2} /app/lib/",
         "cp -r include /app/include/tbb"
       ]
     },
@@ -91,18 +91,17 @@
       "name": "embree",
       "buildsystem": "cmake",
       "config-opts": [
-        "-DEMBREE_TBB_ROOT=/app/lib/tbb",
+        "-DEMBREE_TBB_ROOT=/app/lib",
         "-DTBB_INCLUDE_DIR=/app/include/tbb",
-        "-DTBB_LIBRARY=/app/lib/tbb/libtbb.so.2",
-        "-DTBB_LIBRARY_MALLOC=/app/lib/tbb/libtbbmalloc.so.2",
+        "-DTBB_LIBRARY=/app/lib/libtbb.so.2",
+        "-DTBB_LIBRARY_MALLOC=/app/lib/libtbbmalloc.so.2",
         "-DEMBREE_TUTORIALS="
       ],
       "builddir": true,
       "build-options": {
-        "append-ld-library-path": "/app/lib/tbb",
         "env": {
-          "TBB_LIBRARY": "/app/lib/tbb/libtbb.so.2",
-          "TBB_LIBRARY_MALLOC": "/app/lib/tbb/libtbbmalloc.so.2"
+          "TBB_LIBRARY": "/app/lib/libtbb.so.2",
+          "TBB_LIBRARY_MALLOC": "/app/lib/libtbbmalloc.so.2"
         }
       },
       "sources": [
@@ -127,9 +126,6 @@
         "-Dembree_DIR=/app/lib/cmake/embree-2.17.3",
         "-DDISTRIBUTOR=MagicMyth"
       ],
-      "build-options": {
-        "append-ld-library-path": "/app/lib/tbb"
-      },
       "sources": [
         {
           "type": "git",
