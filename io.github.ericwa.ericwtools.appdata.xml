@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component>
+<component type="console-application">
   <id>io.github.ericwa.ericwtools</id>
   <name>ericw-tools</name>
   <summary>Quake and other ID Tech 1 compiling tools</summary>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>GPL-3.0</project_license>
+  <provides>
+    <binary>io.github.ericwa.ericwtools</binary>
+  </provides>
   <description>
     <p>
       A collection of command line utilities for building Quake levels and working with various Quake file formats.
