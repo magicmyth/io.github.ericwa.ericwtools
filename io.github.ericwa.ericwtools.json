@@ -1,7 +1,7 @@
 {
   "app-id": "io.github.ericwa.ericwtools",
   "runtime": "org.freedesktop.Platform",
-  "runtime-version": "1.6",
+  "runtime-version": "18.08",
   "sdk": "org.freedesktop.Sdk",
   "command": "ewt-build-map",
   "finish-args": [
@@ -31,7 +31,6 @@
       "build-commands": [
         "make -j `nproc`"
       ],
-      "subdir": "ispc-ispc-0621fcb",
       "sources": [
         {
           "type": "file",
@@ -41,8 +40,34 @@
         },
         {
           "type": "shell",
-          "commands": ["tar xfz ispc-ispc-v1.9.2-0-g417b33e.tar.gz", "ls"]
+          "commands": [
+            "tar xfz ispc-ispc-v1.9.2-0-g417b33e.tar.gz",
+            "mv ispc-ispc-0621fcb/* .",
+            "mv ispc-ispc-0621fcb/.[!.]* .",
+            "ls -la ispc-ispc-0621fcb",
+            "rmdir ispc-ispc-0621fcb"]
 
+        },
+        {
+          "type": "shell",
+          "commands": ["ls", "pwd"]
+
+        },
+        {
+          "type": "patch",
+          "path": "patches/ispc/0001-Remove-uses-of-LLVM-dump-functions.patch"
+        },
+        {
+          "type": "patch",
+          "path": "patches/ispc/Makefile.patch"
+        },
+        {
+          "type": "patch",
+          "path": "patches/ispc/LLVM6-1.patch"
+        },
+        {
+          "type": "patch",
+          "path": "patches/ispc/LLVM6-2.patch"
         }
       ],
       "post-install": [
@@ -107,12 +132,12 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/embree/embree/archive/v2.17.3.tar.gz",
-          "sha256": "c7d7172ce6e64a7a405fba97ed9e3e92a9cdd53aba5cfc0d46d4b792e22bc0fe"
+          "url": "https://github.com/embree/embree/archive/v2.17.6.tar.gz",
+          "sha256": "29b78b13728f81ced69ad24edb0bfe3f5e0298b83648371636394c9ecbc08752"
         }
       ],
       "post-install": [
-        "ln -s /app/share/doc/embree2 /app/lib/cmake/embree-2.17.3/doc"
+        "ln -s /app/share/doc/embree2 /app/lib/cmake/embree-2.17.6/doc"
       ]
     },
     {
@@ -123,14 +148,14 @@
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_INSTALL_PREFIX=/app",
         "-DCMAKE_INSTALL_INCLUDEDIR=/app/include/embree3",
-        "-Dembree_DIR=/app/lib/cmake/embree-2.17.3",
+        "-Dembree_DIR=/app/lib/cmake/embree-2.17.6",
         "-DDISTRIBUTOR=MagicMyth"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/ericwa/ericw-tools.git",
-          "commit": "00e60f923eb095f495e2159d017e83c6562a1a12"
+          "commit": "f537fc2747ba7ec0fc7a5150879bb162d29f5829"
         }
       ],
       "cleanup": [
